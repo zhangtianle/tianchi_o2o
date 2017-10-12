@@ -46,6 +46,8 @@ def percent(column):
         return 'null'
     elif re.match(regex, column['Discount_rate']):
         num_max, num_min = column['Discount_rate'].split(':')
+        num_max = float(num_max)
+        num_min = float(num_min)
         return float((num_max - num_min) / num_max)
     else:
         return column['Discount_rate']
