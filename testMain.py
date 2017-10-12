@@ -9,9 +9,14 @@
 import pandas as pd
 import numpy as np
 
-train_online = pd.read_csv('/home/kyle/Documents/tianchi/o2o/ccf_online_stage1_train.csv')
-train_offline = pd.read_csv('/home/kyle/Documents/tianchi/o2o/ccf_offline_stage1_train.csv')
-test = pd.read_csv('/home/kyle/Documents/tianchi/o2o/ccf_offline_stage1_test_revised.csv')
+root_dir_remote = '~/dataset/'
+root_dir_local = '~/Documents/tianchi/'
+
+root_dir = root_dir_remote
+
+train_online = pd.read_csv(root_dir + 'o2o/ccf_online_stage1_train.csv')
+train_offline = pd.read_csv(root_dir + 'o2o/ccf_offline_stage1_train.csv')
+test = pd.read_csv(root_dir + 'o2o/ccf_offline_stage1_test_revised.csv')
 
 all_offline = pd.concat([train_offline, test], keys=['train', 'test'])
 
