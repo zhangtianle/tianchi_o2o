@@ -75,3 +75,4 @@ all_offline['is_used_in_15day'] = all_offline.apply(used_in_15day, axis=1)
 
 print(all_offline['Discount_percent'].value_counts())
 
+
