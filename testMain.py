@@ -45,7 +45,7 @@ def percent(column):
     else:
         return column['Discount_rate']
 
-all_offline['Discount_rate'] = all_offline.apply(percent, axis=1)
+all_offline['Discount_percent'] = all_offline.apply(percent, axis=1)
 
 
 def discount_limit(column):
