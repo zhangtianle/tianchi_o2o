@@ -52,7 +52,7 @@ def percent(column):
     else:
         return column['Discount_rate']
 
-all_offline['Discount_percent'] = all_offline.apply(percent, axis=1)
+all_offline['discount_percent'] = all_offline.apply(percent, axis=1)
 
 
 def discount_limit(column):
@@ -64,13 +64,13 @@ def discount_limit(column):
     else:
         return 0
 
-all_offline['Discount_limit'] = all_offline.apply(discount_limit, axis=1)
+all_offline['discount_limit'] = all_offline.apply(discount_limit, axis=1)
 
 import datetime
 
 def used_in_15day(column):
     if column['is_used'] == 1 and column['Date_received'] != 'null' and column['Date'] != 'null':
-        days = (datetime.datetime.strftime(column['Date'], "%Y%m%d") - datetime.datetime.strftime(column['Date_received'], "%Y%m%d"))
+        days = (datetime.datetime.strptime(column['Date'], "%Y%m%d") - datetime.datetime.strptime(column['Date_received'], "%Y%m%d")).total_seconds() / 86400
         if days < 15:
             return 1
         else:
@@ -80,6 +80,74 @@ def used_in_15day(column):
 
 all_offline['is_used_in_15day'] = all_offline.apply(used_in_15day, axis=1)
 
-print(all_offline['Discount_percent'].value_counts())
+print(all_offline['discount_percent'].value_counts())
+
+# null                  701602
+# 0.9                   403589
+# 0.8333333333333334    330255
+# 0.75                  103748
+# 0.95                   69099
+# 0.8                    56084
+# 0.7                    38425
+# 0.85                   29585
+# 0.5                    28785
+# 0.9666666666666667     22195
+# 0.95                   21559
+# 0.8666666666666667     17685
+# 0.6666666666666666     13497
+# 0.9                     8912
+# 0.6                     8300
+# 0.9333333333333333      5452
+# 0.8                     4176
+# 0.98                    3693
+# 0.85                     650
+# 0.99                     551
+# 0.5                      196
+# 0.75                     121
+# 0.2                      110
+# 0.975                     75
+# 0.6                       59
+# 0.3333333333333333        56
+# 0.7                       55
+# 0.4                        9
+# 0.94                       1
+# Name: Discount_percent, dtype: int64
+
+
+"""
+no discount_percent_layer
+"""
+
+def discount_limit_layer(column):
+    if column == 'null':
+        return 'null'
+    column = int(column)
+    if column <= 10:
+        return 10
+    elif column <= 20:
+        return 20
+    elif column <= 30:
+        return 30
+    elif column <= 50:
+        return 50
+    elif column <= 100:
+        return 100
+    elif column <= 200:
+        return 200
+    else:
+        return 300
+
+all_offline['discount_limit_layer'] = all_offline['discount_limit'].apply(discount_limit_layer, axis=1)
+
+train_finally, test_finally = all_offline[:train_offline.shape[0]], all_offline[train_offline.shape[0]:]
+all_offline.to_csv('output/all_offline.csv')
+train_finally.to_csv('output/train_finally.csv')
+test_finally.to_csv('output/test_finally.csv')
+
+# all_offline_new = pd.get_dummies(all_offline_new)
+
+
+
+
 
 
