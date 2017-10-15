@@ -7,16 +7,15 @@
 """
 
 import pandas as pd
-import numpy as np
 
-root_dir_remote = '~/dataset/'
-root_dir_local = '~/Documents/tianchi/'
+root_dir_remote = '~/dataset/o2o/'
+root_dir_local = '~/Documents/tianchi/o2o/'
 
 root_dir = root_dir_remote
 
-train_online = pd.read_csv(root_dir + 'o2o/ccf_online_stage1_train.csv')
-train_offline = pd.read_csv(root_dir + 'o2o/ccf_offline_stage1_train.csv')
-test = pd.read_csv(root_dir + 'o2o/ccf_offline_stage1_test_revised.csv')
+train_online = pd.read_csv(root_dir + 'ccf_online_stage1_train.csv')
+train_offline = pd.read_csv(root_dir + 'ccf_offline_stage1_train.csv')
+test = pd.read_csv(root_dir + 'ccf_offline_stage1_test_revised.csv')
 
 all_offline = pd.concat([train_offline, test], keys=['train', 'test'])
 
@@ -117,6 +116,26 @@ print(all_offline['discount_percent'].value_counts())
 """
 no discount_percent_layer
 """
+def discount_percent_layer(column):
+    if column == 'null':
+        return 'null'
+    column = float(column)
+    if column > 0.97:
+        return 0.97
+    elif column > 0.95:
+        return 0.95
+    elif column > 0.90:
+        return 0.90
+    elif column > 0.8:
+        return 0.8
+    elif column > 0.7:
+        return 0.7
+    elif column > 0.6:
+        return 0.6
+    else:
+        return 0.5
+
+all_offline['discount_percent_layer'] = all_offline['discount_percent'].apply(discount_percent_layer)
 
 def discount_limit_layer(column):
     if column == 'null':
@@ -137,17 +156,10 @@ def discount_limit_layer(column):
     else:
         return 300
 
-all_offline['discount_limit_layer'] = all_offline['discount_limit'].apply(discount_limit_layer, axis=1)
+all_offline['discount_limit_layer'] = all_offline['discount_limit'].apply(discount_limit_layer)
 
 train_finally, test_finally = all_offline[:train_offline.shape[0]], all_offline[train_offline.shape[0]:]
 all_offline.to_csv('output/all_offline.csv')
 train_finally.to_csv('output/train_finally.csv')
 test_finally.to_csv('output/test_finally.csv')
-
-# all_offline_new = pd.get_dummies(all_offline_new)
-
-
-
-
-
 
